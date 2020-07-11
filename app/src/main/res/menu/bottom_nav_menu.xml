@@ -2,19 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_home"
+        android:id="@+id/mainFragment"
         android:enabled="true"
         android:icon="@drawable/ic_home_24"
         android:title="@string/home" />
 
     <item
-        android:id="@+id/action_districts"
+        android:id="@+id/districtsFragment"
         android:enabled="true"
         android:icon="@drawable/ic_location_city_24"
         android:title="@string/districts" />
 
     <item
-        android:id="@+id/action_history"
+        android:id="@+id/historyFragment"
         android:enabled="true"
         android:icon="@drawable/ic_list_alt_24"
         android:title="@string/history" />

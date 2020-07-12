@@ -1,4 +1,4 @@
-package sk.ferinaf.covidskstats.networking.models
+package sk.ferinaf.covidskstats.services.networking.models
 
 import com.google.gson.annotations.SerializedName
 

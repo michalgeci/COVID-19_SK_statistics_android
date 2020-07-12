@@ -1,4 +1,4 @@
-package sk.ferinaf.covidskstats.networking
+package sk.ferinaf.covidskstats.services.networking
 
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -8,7 +8,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import sk.ferinaf.covidskstats.networking.models.CovidData
+import sk.ferinaf.covidskstats.services.networking.models.CovidData
 
 object RestApi {
 

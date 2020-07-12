@@ -2,42 +2,35 @@ package sk.ferinaf.covidskstats.ui.main
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.google.gson.Gson
-import com.google.gson.JsonSerializer
-import sk.ferinaf.covidskstats.networking.RestApi
-import sk.ferinaf.covidskstats.networking.models.CovidData
+import sk.ferinaf.covidskstats.services.dataservice.DataService
+import sk.ferinaf.covidskstats.services.networking.models.CovidData
 import java.text.SimpleDateFormat
 import java.util.*
 
 @SuppressLint("SimpleDateFormat")
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val dataService by lazy { DataService.getInstance(application) }
     private val data = MutableLiveData<CovidData>()
-    private val sp by lazy { application.getSharedPreferences("data", Context.MODE_PRIVATE) }
-    private val gson by lazy { Gson() }
 
-    var current = true
-
-    init {
-        val cachedData = loadData()
-        if (cachedData == null) {
-            fetchData()
-        } else {
-            checkCurrent(cachedData)
-            data.postValue(cachedData)
-        }
+    val promile: Float
+    get() {
+        return data.value?.chart?.last()?.let { lastDay ->
+            (lastDay.infectedDaily.toFloat() / lastDay.testedDaily.toFloat()) * 1000f
+        } ?: 0f
     }
 
-    fun fetchData() {
-        RestApi.getData {
-            saveData(it)
-            checkCurrent(it)
+    val current: Boolean
+    get() {
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
+        return data.value?.cache?.startsWith(sdf.format(Date())) ?: false
+    }
+
+    init {
+        dataService.getData {
             data.postValue(it)
         }
     }
@@ -46,24 +39,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return data
     }
 
-    private fun checkCurrent(data: CovidData) {
-        val sdf = SimpleDateFormat("yyyy-MM-dd")
-        current = data.cache.startsWith(sdf.format(Date()))
-    }
-
-    private fun loadData(): CovidData? {
-        val string = sp.getString("data", null)
-        string?.let {
-            return gson.fromJson(it, CovidData::class.java)
+    fun fetchData() {
+        dataService.fetchData {
+            data.postValue(it)
         }
-        return null
-    }
-
-    private fun saveData(data: CovidData) {
-        val edit = sp.edit()
-        val dataString = gson.toJson(data)
-        edit.putString("data", dataString)
-        edit.apply()
     }
 
 }

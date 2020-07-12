@@ -1,7 +1,6 @@
-package sk.ferinaf.covidskstats.networking.models
+package sk.ferinaf.covidskstats.services.networking.models
 
 import com.google.gson.annotations.SerializedName
-import java.util.*
 
 data class ChartData(
     @SerializedName("date")

@@ -6,4 +6,11 @@
 
     <color name="bottom_nav_selected">#FFF</color>
     <color name="bottom_nav_default">#CCC</color>
+
+    <color name="yellow">#ffeb3b</color>
+    <color name="yellowComplement">#212121</color>
+
+    <color name="green">#43A047</color>
+    <color name="pieChartBule">#4FC3F7</color>
+    <color name="pieChartRed">#E53935</color>
 </resources>

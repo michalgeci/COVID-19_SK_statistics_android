@@ -7,7 +7,7 @@ data class DistrictData (
     val id: Int,
 
     @SerializedName("title")
-    val title: String,
+    var title: String,
 
     @SerializedName("amount")
     val amount: DistrictAmountData,

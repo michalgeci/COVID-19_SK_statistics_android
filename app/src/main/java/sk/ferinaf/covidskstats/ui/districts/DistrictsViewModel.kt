@@ -81,7 +81,25 @@ class DistrictsViewModel(application: Application) : AndroidViewModel(applicatio
             item.favorite = (item.id == favoriteId)
         }
 
-        districtData.postValue(baseData)
+        if (sp.getBoolean("onlyNew", false)) {
+            val filtered = baseData.filter { item ->
+                item.newInfected != 0
+            }
+            districtData.postValue(filtered)
+        } else {
+            districtData.postValue(baseData)
+        }
+    }
+
+    fun toggleRecent(onlyNew: Boolean) {
+        if (onlyNew) {
+            val filtered = baseData.filter { item ->
+                item.newInfected != 0
+            }
+            districtData.postValue(filtered)
+        } else {
+            districtData.postValue(baseData)
+        }
     }
 
     fun getData(): LiveData<List<DistrictsItemModel>> {

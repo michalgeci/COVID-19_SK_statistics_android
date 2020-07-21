@@ -1,5 +1,6 @@
 package sk.ferinaf.covidskstats.ui.districts
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -33,19 +34,37 @@ class DistrictsFragment : Fragment() {
 
         val mActivity = activity ?: return
 
+        // Init recycler adapter and layout manager
         val adapter = DistrictsListAdapter(listOf(), true)
+        districtsFragment_recyclerView?.adapter = adapter
+        districtsFragment_recyclerView?.layoutManager = LinearLayoutManager(context)
 
+        // Handle favorite toggle
         adapter.onFavoriteToggle = { id ->
             viewModel.toggleFavorite(id)
         }
 
-        districtsFragment_recyclerView?.adapter = adapter
-        districtsFragment_recyclerView?.layoutManager = LinearLayoutManager(context)
-
+        // Populate data
         viewModel.getData().observe(mActivity, Observer {
             adapter.data = it
             adapter.notifyDataSetChanged()
         })
+
+        // Load switch state
+        val sp = context?.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val onlyNew = sp?.getBoolean("onlyNew", false) ?: false
+        districtsFragment_onlyNew_switch?.isChecked = onlyNew
+        if (onlyNew) {
+            viewModel.toggleRecent(true)
+        }
+
+        // Configure switch
+        districtsFragment_onlyNew_switch?.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.toggleRecent(isChecked)
+            val edit = sp?.edit()
+            edit?.putBoolean("onlyNew", isChecked)
+            edit?.apply()
+        }
 
     }
 

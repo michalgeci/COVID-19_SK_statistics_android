@@ -18,7 +18,9 @@ import com.github.mikephil.charting.data.PieEntry
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.layout_warning_banner.*
 import sk.ferinaf.covidskstats.R
+import sk.ferinaf.covidskstats.services.networking.models.ChartData
 import sk.ferinaf.covidskstats.util.hideLoader
+import sk.ferinaf.covidskstats.util.showDayDetailDialog
 import sk.ferinaf.covidskstats.util.showLoader
 import sk.ferinaf.covidskstats.util.timestampToDateString
 
@@ -47,7 +49,7 @@ class MainFragment : Fragment() {
         val green =  ContextCompat.getColor(mContext, R.color.green)
 
         val sp = mContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val favoriteDistrictId = sp.getInt("favoriteDistrict", -1)
+        var lastDay: ChartData? = null
 
         mainFragment_pieChart?.description = Description().apply { text = "" }
         mainFragment_pieChart?.legend?.isEnabled = false
@@ -64,11 +66,18 @@ class MainFragment : Fragment() {
             }
         }
 
+        mainFragment_moreInfoButton?.setOnClickListener {
+            lastDay?.let {
+                activity?.showDayDetailDialog(it)
+            }
+        }
+
         viewModel.getData().observe(mActivity, Observer {
-            val lastDay = it.chart.last()
+            lastDay = it.chart.last()
+            val mLastDay = lastDay ?: return@Observer
 
             // Set day
-            val dayText = lastDay.day + " " + lastDay.date.replace("-", ". ")
+            val dayText = mLastDay.day + " " + mLastDay.date.replace("-", ". ")
             mainFragment_dayOfStatistics?.text = dayText
 
             // Check if current
@@ -81,8 +90,8 @@ class MainFragment : Fragment() {
             }
 
             // Set last day data
-            mainFragment_numOfTested_textView?.text = lastDay.testedDaily.toString()
-            mainFragment_numOfInfected_textView?.text = lastDay.infectedDaily.toString()
+            mainFragment_numOfTested_textView?.text = mLastDay.testedDaily.toString()
+            mainFragment_numOfInfected_textView?.text = mLastDay.infectedDaily.toString()
 
             // Set favorite city
             val favoriteDistrict = viewModel.getFavoriteCity()
@@ -97,8 +106,8 @@ class MainFragment : Fragment() {
             }
 
             // Set pie chart
-            val testedPie = lastDay.testedDaily - lastDay.infectedDaily
-            val infectedPie = lastDay.infectedDaily
+            val testedPie = mLastDay.testedDaily - mLastDay.infectedDaily
+            val infectedPie = mLastDay.infectedDaily
             val entries = mutableListOf(PieEntry(testedPie.toFloat()), PieEntry(infectedPie.toFloat()))
             val pieDataSet = PieDataSet(entries, "")
             pieDataSet.setDrawValues(false)

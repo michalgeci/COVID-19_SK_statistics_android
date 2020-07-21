@@ -5,9 +5,11 @@
     android:layout_height="match_parent"
     tools:context="sk.ferinaf.covidskstats.ui.history.HistoryFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/historyFragment_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello" />
+        android:scrollbars="vertical"
+        tools:listitem="@layout/item_history_entry" />
 
 </FrameLayout>

@@ -2,9 +2,13 @@ package sk.ferinaf.covidskstats.util
 
 import android.animation.Animator
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.AlertDialog
 import android.view.View
 import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.fragment_main.*
 import sk.ferinaf.covidskstats.R
+import sk.ferinaf.covidskstats.services.networking.models.ChartData
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -35,4 +39,18 @@ fun Fragment.hideLoader() {
             }
         })
         ?.start()
+}
+
+fun Activity.showSimpleDialog(title: String, message: String) {
+    val builder = AlertDialog.Builder(this)
+    builder.setTitle(title).setMessage(message)
+    builder.setPositiveButton("OK", null)
+    val dialog = builder.create()
+    dialog.show()
+}
+
+fun Activity.showDayDetailDialog(data: ChartData) {
+    val message = "%s\n\nTestovaných: %d\nPozitívnych: %d\nAktívne prípady: %d\n\nSPOLU\nNakazených: %d\nVyliečených: %d\nÚmrtia: %d"
+    val formattedMessage = message.format(data.day, data.testedDaily, data.infectedDaily, data.active, data.infected, data.recovered, data.deaths)
+    showSimpleDialog(data.date.replace("-", ". "), formattedMessage)
 }

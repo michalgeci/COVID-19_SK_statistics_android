@@ -200,6 +200,23 @@
 
         </androidx.cardview.widget.CardView>
 
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:cardCornerRadius="8dp">
+
+            <Button
+                android:id="@+id/mainFragment_moreInfoButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Viac informácií"
+                android:textColor="@color/colorPrimary" />
+        </androidx.cardview.widget.CardView>
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"

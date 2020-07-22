@@ -13,6 +13,7 @@ class MainActivity : AppCompatActivity() {
     var states: MutableMap<String, Bundle> = mutableMapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

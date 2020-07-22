@@ -3,33 +3,32 @@ package sk.ferinaf.covidskstats.ui.districts
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.os.Parcelable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import sk.ferinaf.covidskstats.services.dataservice.DataService
+import sk.ferinaf.covidskstats.util.ONLY_NEW
+import sk.ferinaf.covidskstats.util.SETTINGS
 import java.text.SimpleDateFormat
 import java.util.*
 
 @SuppressLint("SimpleDateFormat")
 class DistrictsViewModel(application: Application) : AndroidViewModel(application) {
 
+    companion object {
+        const val FAVORITE_DISTRICT = "favoriteDistrict"
+    }
+
     private val dataService by lazy { DataService.getInstance(application) }
     private val districtData = MutableLiveData<List<DistrictsItemModel>>()
-    val sp by lazy {  application.getSharedPreferences("settings", Context.MODE_PRIVATE) }
+    val sp by lazy {  application.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE) }
 
     private var baseData: List<DistrictsItemModel> = listOf()
 
-    private var mShowFullList = false
-    var showFullList: Boolean
-        get() = mShowFullList
-        set(value) {
-            mShowFullList = value
-            // TODO: filter data
-        }
-
     init {
         val sdf = SimpleDateFormat("dd. MM. yyyy")
-        val favoriteDistrictId = sp.getInt("favoriteDistrict", -1)
+        val favoriteDistrictId = sp.getInt(FAVORITE_DISTRICT, -1)
 
         dataService.getData { covidData ->
             val mappedDistricts = covidData.districts.map { districtData ->
@@ -67,21 +66,21 @@ class DistrictsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun toggleFavorite(id: Int) {
-        val favoriteDistrictId = sp.getInt("favoriteDistrict", -1)
+        val favoriteDistrictId = sp.getInt(FAVORITE_DISTRICT, -1)
         val edit = sp.edit()
         var favoriteId = -1
         if (favoriteDistrictId != id) {
             favoriteId = id
 
         }
-        edit.putInt("favoriteDistrict", favoriteId)
+        edit.putInt(FAVORITE_DISTRICT, favoriteId)
         edit.apply()
 
         baseData.forEach { item ->
             item.favorite = (item.id == favoriteId)
         }
 
-        if (sp.getBoolean("onlyNew", false)) {
+        if (sp.getBoolean(ONLY_NEW, false)) {
             val filtered = baseData.filter { item ->
                 item.newInfected != 0
             }

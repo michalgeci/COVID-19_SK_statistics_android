@@ -10,13 +10,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_history.*
 import sk.ferinaf.covidskstats.R
+import sk.ferinaf.covidskstats.util.SavesRecyclerViewState
 import sk.ferinaf.covidskstats.util.showDayDetailDialog
+import sk.ferinaf.covidskstats.util.smoothScrollToTop
 
-class HistoryFragment : Fragment() {
+class HistoryFragment : Fragment(), SavesRecyclerViewState {
 
     companion object {
-        fun newInstance() = HistoryFragment()
+        const val FROM = "historyFragment"
     }
+
+    override var offsetFixed = false
 
     private lateinit var viewModel: HistoryViewModel
 
@@ -33,6 +37,8 @@ class HistoryFragment : Fragment() {
 
         val mActivity = activity ?: return
 
+        mActivity.title = getString(R.string.history)
+
         val adapter = HistoryListAdapter(listOf())
         historyFragment_recyclerView?.adapter = adapter
         historyFragment_recyclerView?.layoutManager = LinearLayoutManager(context)
@@ -45,8 +51,19 @@ class HistoryFragment : Fragment() {
         viewModel.getData().observe(mActivity, Observer { historyData ->
             adapter.data = historyData
             adapter.notifyDataSetChanged()
+
+            fixOffset(FROM, historyFragment_recyclerView)
         })
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveRecyclerState(FROM, historyFragment_recyclerView)
+    }
+
+    override fun wasReselected() {
+        historyFragment_recyclerView?.smoothScrollToTop()
     }
 
 }

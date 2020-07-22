@@ -10,16 +10,21 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_district.*
+import sk.ferinaf.covidskstats.MainActivity
 import sk.ferinaf.covidskstats.R
-import sk.ferinaf.covidskstats.ui.main.MainViewModel
+import sk.ferinaf.covidskstats.util.ONLY_NEW
+import sk.ferinaf.covidskstats.util.SETTINGS
+import sk.ferinaf.covidskstats.util.SavesRecyclerViewState
+import sk.ferinaf.covidskstats.util.smoothScrollToTop
 
-class DistrictsFragment : Fragment() {
+class DistrictsFragment : Fragment(), SavesRecyclerViewState {
 
     companion object {
-        fun newInstance() = DistrictsFragment()
+        const val DISTRICTS_FRAGMENT = "districtsFragment"
     }
 
     private lateinit var viewModel: DistrictsViewModel
+    override var offsetFixed = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +37,9 @@ class DistrictsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(DistrictsViewModel::class.java)
 
-        val mActivity = activity ?: return
+        val mActivity = (activity as? MainActivity) ?: return
+
+        mActivity.title = getString(R.string.districts)
 
         // Init recycler adapter and layout manager
         val adapter = DistrictsListAdapter(listOf(), true)
@@ -48,11 +55,13 @@ class DistrictsFragment : Fragment() {
         viewModel.getData().observe(mActivity, Observer {
             adapter.data = it
             adapter.notifyDataSetChanged()
+
+            fixOffset(DISTRICTS_FRAGMENT, districtsFragment_recyclerView)
         })
 
         // Load switch state
-        val sp = context?.getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val onlyNew = sp?.getBoolean("onlyNew", false) ?: false
+        val sp = context?.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE)
+        val onlyNew = sp?.getBoolean(ONLY_NEW, false) ?: false
         districtsFragment_onlyNew_switch?.isChecked = onlyNew
         if (onlyNew) {
             viewModel.toggleRecent(true)
@@ -62,10 +71,20 @@ class DistrictsFragment : Fragment() {
         districtsFragment_onlyNew_switch?.setOnCheckedChangeListener { _, isChecked ->
             viewModel.toggleRecent(isChecked)
             val edit = sp?.edit()
-            edit?.putBoolean("onlyNew", isChecked)
+            edit?.putBoolean(ONLY_NEW, isChecked)
             edit?.apply()
+            districtsFragment_recyclerView?.layoutManager?.scrollToPosition(0)
         }
 
+    }
+
+    override fun wasReselected() {
+        districtsFragment_recyclerView?.smoothScrollToTop()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveRecyclerState(DISTRICTS_FRAGMENT, districtsFragment_recyclerView)
     }
 
 }

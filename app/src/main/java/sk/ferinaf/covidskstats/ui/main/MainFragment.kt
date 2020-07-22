@@ -1,8 +1,6 @@
 package sk.ferinaf.covidskstats.ui.main
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.github.mikephil.charting.components.Description
-import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -25,10 +22,6 @@ import sk.ferinaf.covidskstats.util.showLoader
 import sk.ferinaf.covidskstats.util.timestampToDateString
 
 class MainFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = MainFragment()
-    }
 
     private lateinit var viewModel: MainViewModel
 
@@ -44,11 +37,12 @@ class MainFragment : Fragment() {
         val mActivity = activity ?: return
         val mContext = context ?: return
 
+        mActivity.title = getString(R.string.app_name)
+
         val red =  ContextCompat.getColor(mContext, R.color.pieChartRed)
         val blue = ContextCompat.getColor(mContext, R.color.pieChartBule)
         val green =  ContextCompat.getColor(mContext, R.color.green)
 
-        val sp = mContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
         var lastDay: ChartData? = null
 
         mainFragment_pieChart?.description = Description().apply { text = "" }

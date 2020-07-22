@@ -11,13 +11,15 @@ class DataService {
     companion object {
         @Volatile private var INSTANCE: DataService? = null
 
+        const val DATA = "data"
+
         fun getInstance(context: Context): DataService {
             if (INSTANCE == null) {
                 INSTANCE = DataService()
             }
 
             INSTANCE?.mContext = context
-            INSTANCE?.sp = context.getSharedPreferences("data", Context.MODE_PRIVATE)
+            INSTANCE?.sp = context.getSharedPreferences(DATA, Context.MODE_PRIVATE)
 
             if (INSTANCE?.data == null) {
                 INSTANCE?.data = INSTANCE?.loadData()
@@ -54,7 +56,7 @@ class DataService {
     }
 
     private fun loadData(): CovidData? {
-        val string = sp?.getString("data", null)
+        val string = sp?.getString(DATA, null)
         string?.let {
             return gson.fromJson(it, CovidData::class.java)
         }
@@ -64,7 +66,7 @@ class DataService {
     private fun saveData(data: CovidData) {
         val edit = sp?.edit()
         val dataString = gson.toJson(data)
-        edit?.putString("data", dataString)
+        edit?.putString(DATA, dataString)
         edit?.apply()
     }
 

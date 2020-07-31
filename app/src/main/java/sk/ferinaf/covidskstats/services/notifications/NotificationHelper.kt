@@ -73,6 +73,7 @@ object NotificationHelper {
                     .bigText("$content\n$detail"))
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
+                .setNotificationSilent()
         }
 
         with(NotificationManagerCompat.from(context)) {

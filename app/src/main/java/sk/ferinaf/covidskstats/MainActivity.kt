@@ -1,11 +1,20 @@
 package sk.ferinaf.covidskstats
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
+import sk.ferinaf.covidskstats.services.dataservice.DataService
+import sk.ferinaf.covidskstats.services.notifications.AlarmReceiver
+import sk.ferinaf.covidskstats.services.notifications.NotificationHelper
 import sk.ferinaf.covidskstats.util.SavesRecyclerViewState
 
 class MainActivity : AppCompatActivity() {
@@ -29,5 +38,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        NotificationHelper.setAlarm(this)
     }
 }

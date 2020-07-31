@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import sk.ferinaf.covidskstats.services.dataservice.DataService
 import sk.ferinaf.covidskstats.services.networking.models.CovidData
 import sk.ferinaf.covidskstats.services.networking.models.DistrictData
+import sk.ferinaf.covidskstats.util.SETTINGS
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,7 +18,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val dataService by lazy { DataService.getInstance(application) }
     private val data = MutableLiveData<CovidData>()
-    val sp by lazy {  application.getSharedPreferences("settings", Context.MODE_PRIVATE) }
+    val sp by lazy {  application.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE) }
 
     val promile: Float
     get() {
@@ -50,18 +51,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getFavoriteCity(): DistrictData? {
-        val favoriteId = sp.getInt("favoriteDistrict", -1)
-        val favorite = data.value?.districts?.firstOrNull {
-            it.id == favoriteId
-        }
-
-        if (favorite?.title == "Košice I") {
-            favorite.title = "Košice"
-        } else if (favorite?.title == "Bratislava I") {
-            favorite.title = "Bratislava"
-        }
-
-        return favorite
+        return dataService.getFavoriteDistrict()
+//        val favoriteId = sp.getInt("favoriteDistrict", -1)
+//        val favorite = data.value?.districts?.firstOrNull {
+//            it.id == favoriteId
+//        }
+//
+//        if (favorite?.title == "Košice I") {
+//            favorite.title = "Košice"
+//        } else if (favorite?.title == "Bratislava I") {
+//            favorite.title = "Bratislava"
+//        }
+//
+//        return favorite
     }
 
 }

@@ -7,4 +7,12 @@
 
     <string name="oldData">Dáta sú z predošlého dňa</string>
     <string name="updateData">AKTUALIZOVAŤ</string>
+
+    <string name="notificationName">Denné upozornenie</string>
+    <string name="notificationDescription">Upozornenie so novými dennými štatistikami</string>
+    <string name="notificationTitle">Testovaných: %d, z toho pozitívne: %d</string>
+    <string name="notificationContent">%s: %d %s</string>
+    <string name="newCase1">nový prípad</string>
+    <string name="newCase2_4">nové prípady</string>
+    <string name="newCase5_">nových prípadov</string>
 </resources>

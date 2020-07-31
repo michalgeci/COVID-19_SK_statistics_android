@@ -5,6 +5,8 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import sk.ferinaf.covidskstats.services.networking.RestApi
 import sk.ferinaf.covidskstats.services.networking.models.CovidData
+import sk.ferinaf.covidskstats.services.networking.models.DistrictData
+import sk.ferinaf.covidskstats.util.SETTINGS
 
 class DataService {
 
@@ -68,6 +70,23 @@ class DataService {
         val dataString = gson.toJson(data)
         edit?.putString(DATA, dataString)
         edit?.apply()
+    }
+
+    fun getFavoriteDistrict(): DistrictData? {
+        val settingsSP = mContext?.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE)
+        val favoriteId = settingsSP?.getInt("favoriteDistrict", -1)
+
+        val favorite = data?.districts?.firstOrNull {
+            it.id == favoriteId
+        }
+
+        if (favorite?.title == "Košice I") {
+            favorite.title = "Košice"
+        } else if (favorite?.title == "Bratislava I") {
+            favorite.title = "Bratislava"
+        }
+
+        return favorite
     }
 
 }

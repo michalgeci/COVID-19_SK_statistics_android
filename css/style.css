@@ -1,0 +1,42 @@
+img {
+  max-width: 100%;
+  height: auto;
+  width: auto\9; /* ie8 */
+}
+
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+body, html {
+  height: 100%;
+}
+
+#main-image {
+  padding: 32px;
+}
+
+.waves-effect.waves-light-red .waves-ripple {
+   background-color: #ffffff70;
+ }
+
+.waves-light-red {
+  background-color: #f44336;
+}
+
+.waves-light-red:hover {
+  background-color: #e53935
+}
+
+.waves-light-red:visited {
+  background-color: #f44336 
+}
+
+.waves-light-red:active {
+  background-color: #f44336 
+}
+
+.waves-light-red:focus {
+  background-color: #f44336 
+}

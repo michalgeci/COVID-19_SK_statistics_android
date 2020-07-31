@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">COVID-19 SK štatistika</string>
-
-    <string name="home">Domov</string>
-    <string name="districts">Okresy</string>
-    <string name="history">História</string>
-</resources>

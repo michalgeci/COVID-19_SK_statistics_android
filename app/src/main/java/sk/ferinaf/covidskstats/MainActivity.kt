@@ -1,25 +1,24 @@
 package sk.ferinaf.covidskstats
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import android.view.Menu
+import android.view.MenuItem
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import sk.ferinaf.covidskstats.services.dataservice.DataService
-import sk.ferinaf.covidskstats.services.notifications.AlarmReceiver
 import sk.ferinaf.covidskstats.services.notifications.NotificationHelper
-import sk.ferinaf.covidskstats.util.SavesRecyclerViewState
+import sk.ferinaf.covidskstats.util.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     var states: MutableMap<String, Bundle> = mutableMapOf()
+
+    private val dataService by lazy { DataService.getInstance(application) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
@@ -40,5 +39,40 @@ class MainActivity : AppCompatActivity() {
         }
 
         NotificationHelper.setAlarm(this)
+
+        isCurrent()
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.refresh_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.refresh_item -> {
+                showLoader()
+                dataService.fetchData { hideLoader() }
+                this.checkCurrent {  }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+
+    private fun isCurrent() {
+        val sp = getSharedPreferences(SETTINGS, Context.MODE_PRIVATE)
+        val lastChecked = sp.getString("lastChecked", "2000-01-01")
+        val today = Date().getNowInFormat()
+
+        if (lastChecked != today) {
+            this.checkCurrent { _ ->
+                sp.edit().putString("lastChecked", today).apply()
+            }
+        }
+
     }
 }

@@ -51,10 +51,10 @@ class MainFragment : Fragment() {
         mainFragment_pieChart?.isRotationEnabled = false
 
         updateData_button?.setOnClickListener {
-            showLoader()
+            activity?.showLoader()
             updateData_button?.isEnabled = false
             viewModel.fetchData {
-                hideLoader()
+                activity?.hideLoader()
                 updateData_button?.isEnabled = true
                 mainFragment_warningBanner?.visibility = View.GONE
             }
